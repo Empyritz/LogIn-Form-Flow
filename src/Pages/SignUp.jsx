@@ -15,28 +15,43 @@ const SignUp = () => {
     email: '',
     password: ''
   }
-
+  const [error, setError] = React.useState()
 
   return (
     <div className='signInContainer text-center text-black text-2xl font-mono font-bold'>
         <h3>Register</h3>
       <Formik 
         initialValues={initialValues} 
+        
         onSubmit={async(values, formikHelpers)=>{
+          setError('')
           try{
             await signUp(values.email, values.password)
             formikHelpers.resetForm()
             navigate('/home')
           }catch(err){
+            if(err.code  === 'auth/email-already-in-use'){
+              setError('The email is already in use')
+            }
             console.log(err.code)
           }
         }}
+        
         validationSchema={yup.object({
-          email: yup.string().email('Invalid email').required('Please enter the email'),
-          password: yup.string().min(7, 'Password should be minimun 7 characters').required('Please enter password')
+          email: 
+            yup
+              .string()
+              .email('Invalid email')
+              .required('Please enter the email'),
+          password: 
+            yup
+              .string()
+              .min(7, 'Password should be minimun 7 characters')
+              .required('Please enter password')
         })}
+
       >
-        {({errors, isValid, touched, dirty})=> (
+        {({errors, isValid, touched, dirty, isSubmitting})=> (
           <Form >
             <Field  
               name='email' 
@@ -47,8 +62,8 @@ const SignUp = () => {
               color='primary' 
               label='Email' 
               fullWidth 
-              error={touched.email && errors.email}
-              helperText={touched.email && errors.email}
+              error={(touched.email && errors.email) || error  } 
+              helperText={(touched.email && errors.email) || ((error) && error)}
             />  
             <Box height={13} />
             <Field 
@@ -69,7 +84,7 @@ const SignUp = () => {
               variant='contained' 
               color='primary' 
               size='medium'
-              // disabled={!dirty || !isValid}
+              disabled={!dirty || !isValid || isSubmitting}
             >SignUp</Button>
           </Form>
         )}

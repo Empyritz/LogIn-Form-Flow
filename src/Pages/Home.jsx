@@ -8,7 +8,7 @@ const Home = () => {
   const { logOut } = useAuth()
   const handleLogOut = async() => {
     await logOut()
-    navigate('/landing')
+    navigate('/')
   }
 
   return (

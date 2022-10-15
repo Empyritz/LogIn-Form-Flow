@@ -11,11 +11,12 @@ import useAuth from '../Firebase/useAuthContext';
 
 const validationSchema = yup.object({
   email: yup.string('Enter your email').email('Enter a valid email').required('Email is required'),
-  password: yup.string('Enter your password').min(8, 'Password should be of minimum 8 characters length').required('Password is required'),
+  password: yup.string('Enter your password').min(7, 'Password should be of minimum 7 characters length').required('Password is required'),
 });
 
 const SignIn = () => {
-  const { signIn } = useAuth()
+  const [error, setError] = React.useState('') 
+  const { signIn, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
@@ -24,20 +25,35 @@ const SignIn = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values, formikHelpers) => {
+      setError('')
       try{
-        console.log(values)
-        // await signIn(values.email, values.password)
+        // console.log(values)
+        await signIn(values.email, values.password)
         formikHelpers.resetForm()
-        // navigate('/home')
+        navigate('/home')
       }catch(err){
-        console.log(err.code)
+        if(err.code === 'auth/wrong-password'){
+          setError('Wrong password')
+        }
+        // console.log(err.code)
       }
     },
   });
 
+  const handleGoogleLogin = async() => {
+    try{
+      await loginWithGoogle()
+      navigate('/home')
+    }catch(err){
+      console.log(err)
+    }
+  }
+  // console.log(formik.errors)
+
   return (
     <div className='w-screen h-screen flex justify-center items-center bg-teal-700'>
       <form onSubmit={formik.handleSubmit} className='w-7/12 p-8 bg-white flex flex-col gap-y-7 rounded-lg text-center text-black' >
+        
         <TextField
           // fullWidth
           id="email"
@@ -60,8 +76,8 @@ const SignIn = () => {
           type="password"
           value={formik.values.password}
           onChange={formik.handleChange}
-          error={formik.touched.password && Boolean(formik.errors.password)}
-          helperText={formik.touched.password && formik.errors.password}
+          error={(formik.touched.password && Boolean(formik.errors.password)) || error}
+          helperText={(formik.touched.password && formik.errors.password) || (error && error)}
         />
         <Button 
           color="primary" 
@@ -71,6 +87,7 @@ const SignIn = () => {
         > 
           Login
         </Button>
+        <Link to='/pw-forget'>Forgot yuor password?</Link>
         <p >Still don't have an acount 
           <Link to='/signup'>
             <span 
@@ -79,7 +96,12 @@ const SignIn = () => {
             </span>
           </Link>
         </p>
+      <Button onClick={handleGoogleLogin} sx={{
+        backgroundColor: '#269FD7',
+        color: 'white',
+      }}>Google Sigin</Button>
       </form>
+      
     </div>
   );
 };
