@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-// import ReactDOM from 'react-dom';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
+import { useNavigate, Link } from 'react-router-dom';
+import './signIn.css'
+import useAuth from '../Firebase/useAuthContext';
 import Button from '@mui/material/Button';
 import {TextField } from '@mui/material/';
-import './signIn.css'
-import { useNavigate, Link } from 'react-router-dom';
-import useAuth from '../Firebase/useAuthContext';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 
 const validationSchema = yup.object({
   email: yup.string('Enter your email').email('Enter a valid email').required('Email is required'),
@@ -18,27 +18,22 @@ const SignIn = () => {
   const [error, setError] = React.useState('') 
   const { signIn, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
-  const formik = useFormik({
-    initialValues: {
+  const { handleSubmit, control, formState: {errors} } = useForm({
+    defaultValues: {
       email: '',
       password: ''
     },
-    validationSchema: validationSchema,
-    onSubmit: async (values, formikHelpers) => {
-      setError('')
-      try{
-        // console.log(values)
-        await signIn(values.email, values.password)
-        formikHelpers.resetForm()
-        navigate('/home')
-      }catch(err){
-        if(err.code === 'auth/wrong-password'){
-          setError('Wrong password')
-        }
-        // console.log(err.code)
-      }
-    },
-  });
+    resolver: yupResolver(validationSchema)
+  })
+ 
+ const onSubmit = async (data) => {
+  try{
+    await signIn(data.email, data.password)
+    navigate('/home')
+  }catch(err){
+    console.log(err)
+  }
+ }
 
   const handleGoogleLogin = async() => {
     try{
@@ -48,36 +43,42 @@ const SignIn = () => {
       console.log(err)
     }
   }
-  // console.log(formik.errors)
+  console.log(errors.email)
 
   return (
     <div className='w-screen h-screen flex justify-center items-center bg-teal-700'>
-      <form onSubmit={formik.handleSubmit} className='w-96 p-8 bg-white flex flex-col gap-y-7 rounded-lg text-center text-black' >
+      <form onSubmit={handleSubmit(onSubmit)} className='w-96 p-8 bg-white flex flex-col gap-y-7 rounded-lg text-center text-black' >
         
-        <TextField
-          // fullWidth
-          id="email"
-          name="email"
-          label="Email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          error={Boolean(formik.touched.email) && Boolean(formik.errors.email)}
-          color='secondary'
-          helperText={Boolean(formik.touched.email) && formik.errors.email}
+        <Controller 
+          name='email'
+          control={control}
+          render={({field})=> {
+            return(
+              <TextField 
+              {...field} 
+              placeholder='Write your Email' 
+              label='Email' 
+              helperText={errors.email && errors.email.message}
+              error={errors.email}
+              />  
+            )}
+          }
+          // rules={{ required: true, min: 7, max: 23, pattern: /^[\w._]{6,20}@\w+.[a-z]{3,6}.?[a-z]{2,3}?$/i  }}
         />
-        <TextField
-          // fullWidth
-          sx={{
-            color: 'white'
+        <Controller 
+          name='password'
+          control={control}
+          render={({field})=> {
+            return(
+              <TextField 
+                {...field} 
+                placeholder='*******'
+                label='Password'
+                helperText={errors.password && errors.password.message}
+                error={errors.password}
+              />
+            )
           }}
-          id="password"
-          name="password"
-          label="Password"
-          type="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          error={(formik.touched.password && Boolean(formik.errors.password)) || error}
-          helperText={(formik.touched.password && formik.errors.password) || (error && error)}
         />
         <Button 
           color="primary" 
