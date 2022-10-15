@@ -52,7 +52,7 @@ const SignIn = () => {
 
   return (
     <div className='w-screen h-screen flex justify-center items-center bg-teal-700'>
-      <form onSubmit={formik.handleSubmit} className='w-7/12 p-8 bg-white flex flex-col gap-y-7 rounded-lg text-center text-black' >
+      <form onSubmit={formik.handleSubmit} className='w-96 p-8 bg-white flex flex-col gap-y-7 rounded-lg text-center text-black' >
         
         <TextField
           // fullWidth
@@ -87,7 +87,7 @@ const SignIn = () => {
         > 
           Login
         </Button>
-        <Link to='/pw-forget'>Forgot yuor password?</Link>
+        <Link to='/pw-forget'><span className='text-sky-500'>Forgot password?</span></Link>
         <p >Still don't have an acount 
           <Link to='/signup'>
             <span 
