@@ -7,9 +7,10 @@ import {TextField, Box} from '@mui/material/';
 import './signIn.css'
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../Firebase/useAuthContext';
+import Alert from '@mui/material/Alert'
 
 const SignUp = () => {
-  const { signUp } = useAuth() 
+  const { signUp, updateName, verificateEmail } = useAuth() 
   const navigate = useNavigate()
   const initialValues = {
     email: '',
@@ -19,6 +20,7 @@ const SignUp = () => {
 
   return (
     <div className='signInContainer text-center text-black text-2xl font-mono font-bold'>
+      {error && <Alert severity='error'>Ocurrio algo malo</Alert>}
         <h3>Register</h3>
       <Formik 
         initialValues={initialValues} 
@@ -26,7 +28,9 @@ const SignUp = () => {
         onSubmit={async(values, formikHelpers)=>{
           setError('')
           try{
-            await signUp(values.email, values.password)
+            await signUp( values.email, values.password)
+            await updateName(values.name,)
+            await verificateEmail()
             formikHelpers.resetForm()
             navigate('/home')
           }catch(err){
@@ -36,6 +40,7 @@ const SignUp = () => {
             console.log(err.code)
           }
         }}
+
         
         validationSchema={yup.object({
           email: 
@@ -53,6 +58,19 @@ const SignUp = () => {
       >
         {({errors, isValid, touched, dirty, isSubmitting})=> (
           <Form >
+            <Field  
+              name='name' 
+              type='name' 
+              as={TextField} 
+              // value={values.name}
+              variant='outlined' 
+              color='primary' 
+              label='Name' 
+              fullWidth 
+              // error={(touched.name && errors.name) || error  } 
+              // helperText={(touched.name && errors.name) || ((error) && error)}
+            /> 
+            <Box height={13} />
             <Field  
               name='email' 
               type='email' 

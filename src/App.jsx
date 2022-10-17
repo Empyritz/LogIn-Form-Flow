@@ -16,6 +16,7 @@ import PasswordForget from './Pages/PasswordForget'
 import Admin from './Pages/Admin'
 import Account from './Pages/Account'
 import ProtectedRoute from './Components/ProtectedRoute'
+import RedirectUserLogged from './Components/RedirectUserLogged';
 
 function App () {
   return (
@@ -26,8 +27,8 @@ function App () {
           <Route path={ROUTES.LANDING} element={<Landing />}></Route>
           <Route path={ROUTES.HOME} element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path={ROUTES.ACCOUNT} element={<Account />} />
-          <Route path={ROUTES.SIGNIN} element={<SignIn />} />
-          <Route path={ROUTES.SIGNUP} element={<SignUp />} />
+          <Route path={ROUTES.SIGNIN} element={ <RedirectUserLogged><SignIn /></RedirectUserLogged> } />
+          <Route path={ROUTES.SIGNUP} element={<RedirectUserLogged><SignUp /></RedirectUserLogged>} />
           <Route path={ROUTES.PASSWORD_FORGET} element={<PasswordForget />} />
           <Route path={ROUTES.ADMIN} element={<Admin />} />
         </Routes>

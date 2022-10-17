@@ -21,7 +21,8 @@ const SignIn = () => {
   const { handleSubmit, control, formState: {errors} } = useForm({
     defaultValues: {
       email: '',
-      password: ''
+      password: '',
+      name: ''
     },
     resolver: yupResolver(validationSchema)
   })
@@ -47,8 +48,7 @@ const SignIn = () => {
 
   return (
     <div className='w-screen h-screen flex justify-center items-center bg-teal-700'>
-      <form onSubmit={handleSubmit(onSubmit)} className='w-96 p-8 bg-white flex flex-col gap-y-7 rounded-lg text-center text-black' >
-        
+      <form onSubmit={handleSubmit(onSubmit)} className='w-96 p-8 bg-white flex flex-col gap-y-4 rounded-lg text-center text-black' >
         <Controller 
           name='email'
           control={control}
@@ -72,6 +72,7 @@ const SignIn = () => {
             return(
               <TextField 
                 {...field} 
+                type='password'
                 placeholder='*******'
                 label='Password'
                 helperText={errors.password && errors.password.message}

@@ -5,7 +5,7 @@ import useAuth from '../Firebase/useAuthContext';
 
 
 const PasswordForget = () => {
-  const {resetPassword} = useAuth()
+  const {resetForgotPassword} = useAuth()
   const [email, setEmail] = React.useState('')
   const [error, setError] = React.useState('')
   const handleChange = (event) => {
@@ -18,7 +18,7 @@ const PasswordForget = () => {
     }
     try{
       console.log(email)
-      await resetPassword(email)
+      await resetForgotPassword(email)
       setError("We send you and Email to verify it's you")
     }catch(err){
       console.log(err)
