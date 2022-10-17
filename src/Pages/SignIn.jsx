@@ -8,6 +8,8 @@ import {TextField } from '@mui/material/';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 const validationSchema = yup.object({
   email: yup.string('Enter your email').email('Enter a valid email').required('Email is required'),
@@ -15,8 +17,9 @@ const validationSchema = yup.object({
 });
 
 const SignIn = () => {
-  const [error, setError] = React.useState('') 
-  const { signIn, loginWithGoogle } = useAuth()
+  // const [error, setError] = React.useState('') 
+  const [rememberUser, setRememberUser] = React.useState(false)
+  const { signIn, loginWithGoogle, noRememberUser } = useAuth()
   const navigate = useNavigate()
   const { handleSubmit, control, formState: {errors} } = useForm({
     defaultValues: {
@@ -30,6 +33,13 @@ const SignIn = () => {
  const onSubmit = async (data) => {
   try{
     await signIn(data.email, data.password)
+    if(!rememberUser){
+      try{
+        await noRememberUser()
+      }catch(err) {
+        console.log(err)
+      }
+    }
     navigate('/home')
   }catch(err){
     console.log(err)
@@ -45,6 +55,10 @@ const SignIn = () => {
     }
   }
   console.log(errors.email)
+
+  const handleChangeBox = () => {
+    setRememberUser(!rememberUser)
+  }
 
   return (
     <div className='w-screen h-screen flex justify-center items-center bg-teal-700'>
@@ -89,7 +103,10 @@ const SignIn = () => {
         > 
           Login
         </Button>
+        <div>
+          <FormControlLabel  sx={ rememberUser && { color: '#0ea5e9' }} control={<Checkbox checked={rememberUser} />} label='Remember me' onChange={handleChangeBox}/>
         <Link to='/pw-forget'><span className='text-sky-500'>Forgot password?</span></Link>
+        </div>
         <p >Still don't have an acount 
           <Link to='/signup'>
             <span 

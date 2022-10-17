@@ -10,7 +10,9 @@ import {
   updateProfile,
   sendEmailVerification,
   updateEmail,
-  updatePassword 
+  updatePassword,
+  setPersistence,
+  browserSessionPersistence
 } from 'firebase/auth'
 import {auth} from './index'
 // import { async } from '@firebase/util';
@@ -32,6 +34,7 @@ const AuthProvider = ({children}) => {
   //     setErrors(err.code)
   //   }
   // }
+  const noRememberUser = () => setPersistence(auth, browserSessionPersistence)
   const doUpdatePassword = (newPasssword) => updatePassword(user, newPasssword)
   const doUpdateEmail = (newEmail) => updateEmail(user, newEmail)
   const verificateEmail = () => sendEmailVerification(auth.currentUser)
@@ -70,7 +73,8 @@ const AuthProvider = ({children}) => {
         updateName,
         verificateEmail,
         doUpdateEmail,
-        doUpdatePassword
+        doUpdatePassword,
+        noRememberUser
       }}>
       {children}
     </authContext.Provider>
