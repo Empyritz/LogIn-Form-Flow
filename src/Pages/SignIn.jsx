@@ -10,6 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { useSnackbar } from 'notistack'
 
 const validationSchema = yup.object({
   email: yup.string('Enter your email').email('Enter a valid email').required('Email is required'),
@@ -17,7 +18,8 @@ const validationSchema = yup.object({
 });
 
 const SignIn = () => {
-  // const [error, setError] = React.useState('') 
+  const [error, setError] = React.useState('') 
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
   const [rememberUser, setRememberUser] = React.useState(false)
   const { signIn, loginWithGoogle, noRememberUser } = useAuth()
   const navigate = useNavigate()
@@ -29,16 +31,27 @@ const SignIn = () => {
     },
     resolver: yupResolver(validationSchema)
   })
+
+  // React.useEffect(() => {
+  //   // console.log(error)
+  //   // console.log('lalal')
+  //   // if(!!error){
+  //   //   console.log('aquie error')
+  //     enqueueSnackbar('error', {variant: 'error'} )
+  //   // }
+  // }, [setError])
  
  const onSubmit = async (data) => {
+  setError('')
   try{
     await signIn(data.email, data.password)
     if(!rememberUser){
       try{
         await noRememberUser()
       }catch(err) {
-        console.log(err)
+        setError('la concha de la lora')
       }
+
     }
     navigate('/home')
   }catch(err){
@@ -120,7 +133,7 @@ const SignIn = () => {
         color: 'white',
       }}>Google Sigin</Button>
       </form>
-      
+      {error && <p>erro</p> }
     </div>
   );
 };

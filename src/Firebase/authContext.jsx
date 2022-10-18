@@ -12,7 +12,9 @@ import {
   updateEmail,
   updatePassword,
   setPersistence,
-  browserSessionPersistence
+  browserSessionPersistence,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from 'firebase/auth'
 import {auth} from './index'
 // import { async } from '@firebase/util';
@@ -34,6 +36,15 @@ const AuthProvider = ({children}) => {
   //     setErrors(err.code)
   //   }
   // }
+  const reauthenticateUser = async(userProvidedPassword) => {
+    try{
+      await reauthenticateWithCredential(auth.currentUser, credentials(userProvidedPassword))
+    }catch(err){
+      return err
+    }
+  }
+  const credentials = (userProvidedPassword) => EmailAuthProvider.credential(auth.currentUser.email, userProvidedPassword)
+  // const reauthenticateUser = () => reauthenticateWithCredential(auth.currentUser, credentials)
   const noRememberUser = () => setPersistence(auth, browserSessionPersistence)
   const doUpdatePassword = (newPasssword) => updatePassword(user, newPasssword)
   const doUpdateEmail = (newEmail) => updateEmail(user, newEmail)
@@ -74,7 +85,9 @@ const AuthProvider = ({children}) => {
         verificateEmail,
         doUpdateEmail,
         doUpdatePassword,
-        noRememberUser
+        noRememberUser,
+        reauthenticateUser,
+        // credentials
       }}>
       {children}
     </authContext.Provider>

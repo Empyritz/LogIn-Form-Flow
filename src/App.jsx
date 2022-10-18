@@ -20,7 +20,7 @@ import RedirectUserLogged from './Components/RedirectUserLogged';
 
 function App () {
   return (
-    <div className='w-screen h-screen text-slate-200'>
+    <div className='w-screen h-full text-slate-200'>
       <Router>
         <Header />
         <Routes>
